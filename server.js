@@ -1,19 +1,17 @@
 const express = require('express');
+const {
+  getAllFriends,
+  getFriend,
+  postFriend,
+} = require('./controllers/friends.controller');
+const {
+  getMessages,
+  postMessages,
+} = require('./controllers/messages.controller');
 
 const app = express();
 
 const PORT = 3000;
-
-const friends = [
-  {
-    id: 0,
-    name: 'Albert Einstein',
-  },
-  {
-    id: 1,
-    name: 'Sir Issac Newton',
-  },
-];
 
 // Logging Middleware
 app.use((req, res, next) => {
@@ -26,45 +24,12 @@ app.use((req, res, next) => {
 // Json parsing Middleware
 app.use(express.json());
 
-app.get('/friends', (req, res) => {
-  res.json(friends);
-});
+app.get('/friends', getAllFriends);
+app.get('/friends/:friendId', getFriend);
+app.post('/friends', postFriend);
 
-app.get('/friends/:friendId', (req, res) => {
-  const friendId = Number(req.params.friendId);
-  const friend = friends[friendId];
-  if (friend) {
-    res.json(friend);
-  } else {
-    res.status(404).json({
-      error: 'Friend does not exists',
-    });
-  }
-});
-
-app.get('/messages', (req, res) => {
-  res.send('<ul><li>Hello Albert!</li></ul>');
-});
-
-app.post('/friends', (req, res) => {
-  if (!req.body.name) {
-    return res.status(400).json({
-      error: 'Missing friend name',
-    });
-  }
-
-  const newFriend = {
-    id: friends.length,
-    name: req.body.name,
-  };
-  friends.push(newFriend);
-
-  res.json(newFriend);
-});
-
-app.post('/messages', (req, res) => {
-  console.log(`Updating messages`);
-});
+app.get('/messages', getMessages);
+app.post('/messages', postMessages);
 
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}...`);
