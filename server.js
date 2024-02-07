@@ -15,12 +15,16 @@ const friends = [
   },
 ];
 
+// Logging Middleware
 app.use((req, res, next) => {
   const start = Date.now();
   next();
   const delta = Date.now() - start;
   console.log(`🔎 | Server | ${req.method} ${req.url} ${delta}ms `);
 });
+
+// Json parsing Middleware
+app.use(express.json());
 
 app.get('/friends', (req, res) => {
   res.json(friends);
@@ -40,6 +44,22 @@ app.get('/friends/:friendId', (req, res) => {
 
 app.get('/messages', (req, res) => {
   res.send('<ul><li>Hello Albert!</li></ul>');
+});
+
+app.post('/friends', (req, res) => {
+  if (!req.body.name) {
+    return res.status(400).json({
+      error: 'Missing friend name',
+    });
+  }
+
+  const newFriend = {
+    id: friends.length,
+    name: req.body.name,
+  };
+  friends.push(newFriend);
+
+  res.json(newFriend);
 });
 
 app.post('/messages', (req, res) => {
