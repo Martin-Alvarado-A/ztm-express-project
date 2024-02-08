@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 
 const friendsRouter = require('./routes/friends.router');
 const messagesRouter = require('./routes/messages.router');
@@ -15,6 +16,9 @@ app.use((req, res, next) => {
     `🔎 | Server | ${req.method} ${req.baseUrl}${req.url} ${delta}ms `
   );
 });
+
+// Static file Middleware
+app.use('/site', express.static(path.join(__dirname, 'public')));
 
 // Json parsing Middleware
 app.use(express.json());
